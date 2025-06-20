@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Track {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  artist      String
+  fileUrl     String
+  releaseDate DateTime?
+  createdAt   DateTime @default(now())
+
+  user        SupabaseUser @relation(fields: [userId], references: [id])
+
+  @@map("tracks")
+}
+
+model SupabaseUser {
+  id        String   @id @db.Uuid
+  supabaseId String   @unique
+  email     String?
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
+  tracks    Track[]
+
+  @@map("users")
+  @@schema("auth")
+}
