@@ -1,24 +1,24 @@
 // src/user/user.service.ts
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { supabase } from '../supabase/supabase.client';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
-
   async createIfNotExists({ id, email }: { id: string; email: string }) {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { id },
-    });
+    const { data, error } = await supabase
+      .from('supabase_users')
+      .select('*')
+      .eq('supabase_id', id)
+      .maybeSingle();
 
-    if (!existingUser) {
-      await this.prisma.user.create({
-        data: {
-          id,
-          email,
-          supabaseId: id,
-        },
-      });
+    if (error) throw error;
+
+    if (!data) {
+      const { error: insertError } = await supabase
+        .from('supabase_users')
+        .insert([{ supabase_id: id, email }]);
+
+      if (insertError) throw insertError;
     }
   }
 }

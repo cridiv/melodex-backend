@@ -10,31 +10,31 @@ import { createClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class SupabaseAuthGuard implements CanActivate {
-  private supabase = createClient(
+  private supabaseAdmin = createClient(
     process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<Request>();
-
     const authHeader = req.headers.authorization;
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedException('Missing or invalid Authorization header');
     }
 
     const token = authHeader.replace('Bearer ', '');
 
-    const { data, error } = await this.supabase.auth.getUser(token);
+    const { data: user, error } = await this.supabaseAdmin.auth.getUser(token);
 
-    if (error || !data?.user) {
+    if (error || !user?.user) {
       throw new UnauthorizedException('Invalid token');
     }
 
-    // We only attach relevant fields to keep it clean
+    // Attach authenticated user to request
     req.user = {
-      sub: data.user.id,
-      email: data.user.email,
+      id: user.user.id,
+      email: user.user.email,
     };
 
     return true;
