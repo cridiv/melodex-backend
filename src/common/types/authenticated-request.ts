@@ -2,8 +2,9 @@
 import { Request } from 'express';
 
 export type SupabaseUser = {
+  id: string;
+  email?: string;
   sub: string;
-  email: string;
 };
 
 export interface AuthenticatedRequest extends Request {

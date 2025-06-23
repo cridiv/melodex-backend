@@ -12,7 +12,7 @@ async function bootstrap() {
       'Authorization',
       'cache-control', 
     ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
   });
 
   await app.listen(process.env.PORT ?? 3000);

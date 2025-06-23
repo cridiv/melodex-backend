@@ -1,6 +1,7 @@
 // src/session/session.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { supabase } from '../supabase/supabase.client';
+import { SaveToSessionDto } from './dto/save-to-session.dto';
 
 @Injectable()
 export class SessionService {
@@ -89,4 +90,38 @@ export class SessionService {
 
     return data;
   }
+
+async saveTrackToSession(data: {
+  sessionId: string;
+  userId: string;
+  title: string;
+  artist: string;
+  album: string;
+  duration?: number;
+  genre: string;
+  image: string;
+  fileUrl: string;
+  fileType: string;
+}) {
+  const { data: inserted, error } = await supabase
+    .from('tracks')
+    .insert([
+      {
+        session_id: data.sessionId,
+        user_id: data.userId,
+        title: data.title,
+        artist: data.artist,
+        album: data.album,
+        duration: data.duration,
+        genre: data.genre,
+        image: data.image,
+        file_url: data.fileUrl,
+        file_type: data.fileType,
+      },
+    ])
+    .select();
+
+  if (error) throw new Error(error.message);
+  return inserted;
+}
 }

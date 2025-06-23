@@ -31,7 +31,6 @@ export class SupabaseAuthGuard implements CanActivate {
       throw new UnauthorizedException('Invalid token');
     }
 
-    // Attach authenticated user to request
     req.user = {
       id: user.user.id,
       email: user.user.email,

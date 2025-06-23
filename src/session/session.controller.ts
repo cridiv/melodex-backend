@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
 import { SessionService } from './session.service';
 import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
-
+import { SaveToSessionDto } from './dto/save-to-session.dto';
 @Controller('sessions')
 export class SessionController {
   constructor(private readonly sessionService: SessionService) {}
@@ -25,6 +25,12 @@ export class SessionController {
 async deleteSession(@Param('id') id: string) {
   console.log('Delete request received for:', id);
   return this.sessionService.deleteSession(id);
+}
+
+ @Post('save-track')
+@UseGuards(SupabaseAuthGuard)
+async saveTrackToSession(@Body() body: SaveToSessionDto) {
+  return this.sessionService.saveTrackToSession(body);
 }
 
 }

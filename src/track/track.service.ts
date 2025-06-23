@@ -240,13 +240,30 @@ async deleteTrack(id: string) {
 
     const lyrics = await firstResult.lyrics();
 
-    const { error: updateError } = await supabase
-      .from('tracks')
-      .update({ lyrics })
-      .eq('id', id);
+const { error: updateError } = await supabase
+  .from('tracks')
+  .update({ lyrics })
+  .eq('id', id);
 
-    if (updateError) throw new Error('Failed to update lyrics');
+if (updateError) {
+  console.error('🔥 Supabase update error:', updateError.message);
+  throw new Error('Failed to update lyrics');
+}
 
     return { ...track, lyrics };
   }
+
+async updateTrack(id: string, updates: Partial<{ lyrics: string }>) {
+  const { data, error } = await supabase
+    .from('tracks')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw new Error('Failed to update track with lyrics');
+
+  return data;
+}
+
 }
