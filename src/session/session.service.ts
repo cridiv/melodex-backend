@@ -124,4 +124,16 @@ async saveTrackToSession(data: {
   if (error) throw new Error(error.message);
   return inserted;
 }
+async getAllTracksForUser(userId: string) {
+  const { data, error } = await supabase
+    .from('tracks')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return data;
+}
+
 }

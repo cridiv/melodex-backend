@@ -33,4 +33,9 @@ async saveTrackToSession(@Body() body: SaveToSessionDto) {
   return this.sessionService.saveTrackToSession(body);
 }
 
+@Get('all-user-tracks/:userId')
+@UseGuards(SupabaseAuthGuard)
+getAllUserTracks(@Param('userId') userId: string) {
+  return this.sessionService.getAllTracksForUser(userId);
+}
 }

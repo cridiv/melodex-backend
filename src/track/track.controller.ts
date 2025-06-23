@@ -34,6 +34,13 @@ export class TrackController {
     return this.trackService.handleUpload(req as any, file);
   }
 
+    @Post('upload-link')
+  async uploadFromLink(@Req() req: Request, @Body() body: { link: string }) {
+    const user = req.user;
+    if (!user) throw new Error('User not found');
+    return this.trackService.handleLinkUpload(req as any, body.link, user.id);
+  }
+
   @Patch(':id')
   async updateTrack(
     @Param('id') id: string,
@@ -53,4 +60,5 @@ export class TrackController {
   async generateLyrics(@Param('id') id: string) {
     return this.trackService.generateLyrics(id);
   }
+
 }
